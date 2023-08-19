@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import plotly.express as px
 
 def shorten_Categories(categories, cutoff):
-    # sourcery skip: assign-if-exp, dict-comprehension, inline-immediately-returned-variable
     categorical_map = {}
     for i in range(len(categories)):
         if categories.values[i] >= cutoff:
@@ -28,7 +29,7 @@ def education_cleaner(education_level):
         return 'Post graduate'
     return 'Less than Bachelors'
 
-st.cache_data
+@st.cache_data
 def load_data():
     df = pd.read_csv('Datasets/survey_results_public.csv')
     df = df[['Country', 'EdLevel', 'YearsCodePro', 'Employment', 'ConvertedCompYearly']]
@@ -61,26 +62,14 @@ def show_explore_page():
         ### StackOverflow Developer's Survey 2022
         ''')
     data = df['Country'].value_counts().reset_index()
-    data.columns = ['Country', 'Count']
-    fig1 = px.pie(data, values='Count', names='Country', title='Number of Data from Different Countries')
-    fig1.update_layout(title_font=dict(size=24)) # You can change 24 to the desired font size
-    st.plotly_chart(fig1)
+    data.columns = ['Country', 'count']
+    fig = px.pie(data_frame=data, names='Country', values='count', title='Number of Data from Different Countries')
+    st.plotly_chart(fig)
 
-
-    st.write(
-            """
-            ### Mean salary v Country
-            """
-            )
-
+    st.write("### Mean salary v Country")
     data = df.groupby(['Country'])['Salary'].mean().sort_values(ascending=True)
     st.bar_chart(data)
-    
-    st.write(
-    """
-        #### Mean salary based on Experience
-    """
-    )
 
+    st.write("#### Mean salary based on Experience")
     data = df.groupby(['Experience'])['Salary'].mean().sort_values(ascending=True)
     st.line_chart(data)
