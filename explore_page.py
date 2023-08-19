@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 def shorten_Categories(categories, cutoff):
-    # sourcery skip: assign-if-exp, dict-comprehension, inline-immediately-returned-variable
     categorical_map = {}
     for i in range(len(categories)):
         if categories.values[i] >= cutoff:
@@ -28,7 +27,7 @@ def education_cleaner(education_level):
         return 'Post graduate'
     return 'Less than Bachelors'
 
-@st.cache_data
+st.cache_data
 def load_data():
     df = pd.read_csv('Datasets/survey_results_public.csv')
     df = df[['Country', 'EdLevel', 'YearsCodePro', 'Employment', 'ConvertedCompYearly']]
@@ -60,29 +59,20 @@ def show_explore_page():
         '''
         ### StackOverflow Developer's Survey 2022
         ''')
-    data = df['Country'].value_counts()
+    data = df['Country'].value_counts().reset_index()
+    data.columns = ['Country', 'Count']
+    fig1 = px.pie(data, values='Count', names='Country', title='Number of Data from Different Countries')
+    fig1.update_layout(title_font=dict(size=24)) # You can change 24 to the desired font size
+    st.plotly_chart(fig1)
 
-    fig1, ax1 = plt.subplots(figsize=(12, 6)) # Set the figure size
-    wedges, texts, autotexts = ax1.pie(data, autopct="%1.1f%%",pctdistance=0.9, shadow=True, startangle=180)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-    # Add a legend with labels
-    ax1.legend(wedges, data.index, title="Countries", loc="center left", bbox_to_anchor=(1.05, 0.5), fontsize=8)
-
-    plt.setp(autotexts, size=8, weight="bold")
-    plt.tight_layout()
-
-    st.write("""
-            #### Number of Data from different countries
-            """)
-    st.pyplot(fig1)
-
-    st.write("""
+    st.write(
+            """
             ### Mean salary v Country
             """
             )
 
-    data = df.groupby(['Country'])['Salary'].mean().sort_values(ascending = True)
+    data = df.groupby(['Country'])['Salary'].mean().sort_values(ascending=True)
     st.bar_chart(data)
     
     st.write(
@@ -91,6 +81,5 @@ def show_explore_page():
     """
     )
 
-    data = df.groupby(['Experience'])['Salary'].mean().sort_values(ascending = True)
+    data = df.groupby(['Experience'])['Salary'].mean().sort_values(ascending=True)
     st.line_chart(data)
-
