@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 def shorten_Categories(categories, cutoff):
+    # sourcery skip: assign-if-exp, dict-comprehension, inline-immediately-returned-variable
     categorical_map = {}
     for i in range(len(categories)):
         if categories.values[i] >= cutoff:
