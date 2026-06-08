@@ -1,13 +1,28 @@
 import pandas as pd
 
-# Reading the original dataset
-original_dataset_path = 'Datasets/original_dataset.csv'
-df = pd.read_csv(original_dataset_path)
+from config import BASE_DIR, DATASET_PATH
 
-# Selecting the required columns
-required_columns = ['Age', 'Country', 'Employment', 'EdLevel', 'YearsCodePro', 'Industry', 'ConvertedCompYearly']
-df = df[required_columns]
 
-# Saving the new dataset
-new_dataset_path = 'Datasets/survey_results_public.csv'
-df.to_csv(new_dataset_path, index=False)
+ORIGINAL_DATASET_PATH = BASE_DIR / "Datasets" / "original_dataset.csv"
+REQUIRED_COLUMNS = [
+    "Age",
+    "Country",
+    "Employment",
+    "EdLevel",
+    "YearsCodePro",
+    "Industry",
+    "ConvertedCompYearly",
+]
+
+
+def compress_dataset(
+    original_dataset_path=ORIGINAL_DATASET_PATH,
+    output_dataset_path=DATASET_PATH,
+):
+    df = pd.read_csv(original_dataset_path)
+    df = df[REQUIRED_COLUMNS]
+    df.to_csv(output_dataset_path, index=False)
+
+
+if __name__ == "__main__":
+    compress_dataset()
