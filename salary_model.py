@@ -9,7 +9,15 @@ from config import MODEL_PATH
 @lru_cache(maxsize=1)
 def load_saved_steps():
     with MODEL_PATH.open("rb") as file:
-        return pickle.load(file)
+        saved_steps = pickle.load(file)
+
+    ensure_tree_model_compatibility(saved_steps["model"])
+    return saved_steps
+
+
+def ensure_tree_model_compatibility(model):
+    if not hasattr(model, "monotonic_cst"):
+        model.monotonic_cst = None
 
 
 def predict_salary(country, education, experience):
